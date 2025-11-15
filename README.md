@@ -68,7 +68,7 @@ Copy `env.example` to `.env.local`:
 
 ```bash
 NODE_ENV=development
-NEXT_PUBLIC_API_URL=https://ave-catering.onrender.com
+NEXT_PUBLIC_API_URL=https://wholemrtbackend.onrender.com
 NEXT_PUBLIC_APP_NAME=Wholesale Market
 ```
 
