@@ -23,30 +23,29 @@ export default function TopCarousel(): React.JSX.Element {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-  const fetchBanners = async () => {
-    try {
-      const API = `${process.env.NEXT_PUBLIC_API_URL}/api/banners/public`;
-      const res = await axios.get(API);
-
-      if (Array.isArray(res.data)) {
-        setTopCarouselItems(res.data);
-      } else if (res.data?.banners && Array.isArray(res.data.banners)) {
-        setTopCarouselItems(res.data.banners);
-      } else {
-        console.warn('Unexpected banners response shape', res.data);
+    const fetchBanners = async () => {
+      try {
+        const res = await axios.get('https://wholemrtbackend.onrender.com/api/banners/public');
+        // controller returns an array
+        if (Array.isArray(res.data)) {
+          setTopCarouselItems(res.data);
+        } else if (res.data?.banners && Array.isArray(res.data.banners)) {
+          // in case API shape differs
+          setTopCarouselItems(res.data.banners);
+        } else {
+          console.warn('Unexpected banners response shape', res.data);
+          setTopCarouselItems([]);
+        }
+      } catch (error) {
+        console.error('Banner fetch error:', error);
         setTopCarouselItems([]);
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.error('Banner fetch error:', error);
-      setTopCarouselItems([]);
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
 
-  fetchBanners();
-}, []);
-
+    fetchBanners();
+  }, []);
 
   // Auto-slide
   useEffect(() => {
