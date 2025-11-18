@@ -26,31 +26,31 @@ export default function TopCarousel(): React.JSX.Element {
   // ---------------------------
   // ✅ Fetch Banners using AXIOS
   // ---------------------------
- 
-  useEffect(() => {
-  const fetchBanners = async () => {
-    try {
-      const API = `${process.env.NEXT_PUBLIC_API_URL}/api/banners/public`;
-      const res = await axios.get(API);
 
-      if (Array.isArray(res.data)) {
-        setTopCarouselItems(res.data);
-      } else if (res.data?.banners && Array.isArray(res.data.banners)) {
-        setTopCarouselItems(res.data.banners);
-      } else {
-        console.warn('Unexpected banners response shape', res.data);
+  useEffect(() => {
+    const fetchBanners = async () => {
+      try {
+        const API = `${process.env.NEXT_PUBLIC_API_URL}/api/banners/public`;
+        const res = await axios.get(API);
+
+        if (Array.isArray(res.data)) {
+          setTopCarouselItems(res.data);
+        } else if (res.data?.banners && Array.isArray(res.data.banners)) {
+          setTopCarouselItems(res.data.banners);
+        } else {
+          console.warn('Unexpected banners response shape', res.data);
+          setTopCarouselItems([]);
+        }
+      } catch (error) {
+        console.error('Banner fetch error:', error);
         setTopCarouselItems([]);
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.error('Banner fetch error:', error);
-      setTopCarouselItems([]);
-    } finally {
-      setLoading(false);
-    }
-  };
- console.log("API URL = ", process.env.NEXT_PUBLIC_API_URL);
-  fetchBanners();
-}, []);
+    };
+    console.log("API URL = ", process.env.NEXT_PUBLIC_API_URL);
+    fetchBanners();
+  }, []);
 
 
 
@@ -126,7 +126,7 @@ export default function TopCarousel(): React.JSX.Element {
                           )}
 
                           {/* CTA */}
-                          <Link href={item.ctaLink}>
+                          <Link href={item?.ctaLink || "#"}>
                             <Button
                               size="lg"
                               className="bg-white text-primary hover:bg-white/90 font-semibold hover:scale-105 transition-all"
@@ -134,6 +134,7 @@ export default function TopCarousel(): React.JSX.Element {
                               {item.ctaText}
                             </Button>
                           </Link>
+
 
                         </div>
                       </div>
@@ -174,9 +175,8 @@ export default function TopCarousel(): React.JSX.Element {
               <button
                 key={index}
                 onClick={() => setCurrentIndex(index)}
-                className={`h-2 rounded-full transition-all ${
-                  index === currentIndex ? 'w-8 bg-white' : 'w-2 bg-white/50'
-                }`}
+                className={`h-2 rounded-full transition-all ${index === currentIndex ? 'w-8 bg-white' : 'w-2 bg-white/50'
+                  }`}
               />
             ))}
           </div>
