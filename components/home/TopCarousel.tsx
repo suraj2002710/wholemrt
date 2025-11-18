@@ -36,7 +36,7 @@ export default function TopCarousel(): React.JSX.Element {
         const res = await axios.get(API);
 
 
-        if (Array.isArray(res.data)) {
+        if (Array.isArray(res.data)) { 
           setTopCarouselItems(res.data);
         } else if (res.data?.banners && Array.isArray(res.data.banners)) {
           setTopCarouselItems(res.data.banners);
@@ -138,7 +138,7 @@ export default function TopCarousel(): React.JSX.Element {
                               size="lg"
                               className="bg-white text-primary hover:bg-white/90 font-semibold hover:scale-105 transition-all"
                             >
-                              {item.ctaText}
+                              {item?.buttonText}
                             </Button>
                           </Link>
 
