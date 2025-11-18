@@ -16,6 +16,7 @@ interface TopCarouselItem {
   ctaText: string;
   ctaLink: string;
   features?: string[];
+  buttonText: string
 }
 
 export default function TopCarousel(): React.JSX.Element {
