@@ -48,7 +48,7 @@ export default function TopCarousel(): React.JSX.Element {
       setLoading(false);
     }
   };
-
+ console.log("API URL = ", process.env.NEXT_PUBLIC_API_URL);
   fetchBanners();
 }, []);
 
