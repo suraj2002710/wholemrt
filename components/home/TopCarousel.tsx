@@ -30,8 +30,11 @@ export default function TopCarousel(): React.JSX.Element {
   useEffect(() => {
     const fetchBanners = async () => {
       try {
-        const API = `${process.env.NEXT_PUBLIC_API_URL}/api/banners/public`;
+        console.log("Api",process.env.NEXT_PUBLIC_API_URL);
+        
+        const API = `${process.env.NEXT_PUBLIC_API_URL}/api/banners/public`; 
         const res = await axios.get(API);
+
 
         if (Array.isArray(res.data)) {
           setTopCarouselItems(res.data);
@@ -51,6 +54,10 @@ export default function TopCarousel(): React.JSX.Element {
     console.log("API URL = ", process.env.NEXT_PUBLIC_API_URL);
     fetchBanners();
   }, []);
+
+
+
+
 
 
 
