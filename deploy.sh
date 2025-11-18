@@ -70,7 +70,7 @@ if [ "$ENVIRONMENT" != "development" ]; then
     print_status "Performing health checks..."
 
     # Check Client health
-    if curl -f http://localhost:3000 > /dev/null 2>&1; then
+    if curl -f https://wholemrt.vercel.app > /dev/null 2>&1; then
         print_status "✅ Client is healthy"
     else
         print_warning "⚠️  Client health check failed"
@@ -81,7 +81,7 @@ if [ "$ENVIRONMENT" != "development" ]; then
     print_status "🎉 Client deployment completed successfully!"
     echo ""
     echo "📱 Service URLs:"
-    echo "   Frontend: http://localhost:3000"
+    echo "   Frontend: https://wholemrt.vercel.app"
     echo "   Nginx: http://localhost:80"
     echo ""
     echo "📊 Docker Services:"

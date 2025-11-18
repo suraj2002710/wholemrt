@@ -124,9 +124,9 @@ npm run build
 
 ## 📱 Service URLs
 
-- **Development**: http://localhost:3000
+- **Development**: https://wholemrt.vercel.app
 - **Production**: https://your-domain.com
-- **Health Check**: http://localhost:3000/health
+- **Health Check**: https://wholemrt.vercel.app/health
 
 ## 🔧 Configuration
 
