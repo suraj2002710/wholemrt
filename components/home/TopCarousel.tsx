@@ -119,30 +119,26 @@ export default function TopCarousel(): React.JSX.Element {
 
                           {/* Features */}
                           {item.features && (
-                            <div className="flex flex-wrap gap-4 mb-6">
-                              {item.features.map((feature, index) => {
-                                const icons = [Truck, Shield, Clock];
-                                const Icon = icons[index % icons.length];
-                                return (
-                                  <div key={index} className="flex items-center gap-2 text-white/80">
-                                    <Icon className="h-5 w-5" />
-                                    <span className="text-sm">{feature}</span>
-                                  </div>
-                                );
-                              })}
-                            </div>
-                          )}
-
-                          {/* CTA */}
+                          <div className="flex flex-wrap gap-2 sm:gap-4 mb-6">
+                            {item.features.map((feature, index) => {
+                              const icons = [Truck, Shield, Clock];
+                              const Icon = icons[index % icons.length];
+                              return (
+                                <div key={index} className="flex items-center gap-2 text-white/80">
+                                  <Icon className="h-5 w-5" />
+                                  <span className="text-sm">{feature}</span>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
+                          
+                          {/* CTA Button */}
                           <Link href={item?.ctaLink || "#"}>
-                            <Button
-                              size="lg"
-                              className="bg-white text-primary hover:bg-white/90 font-semibold hover:scale-105 transition-all"
-                            >
-                              {item?.buttonText}
+                            <Button size="lg" className="bg-white text-primary hover:bg-white/90 font-semibold hover:scale-105 transition-all duration-300 shadow-md">
+                              {item.buttonText}
                             </Button>
                           </Link>
-
 
                         </div>
                       </div>
