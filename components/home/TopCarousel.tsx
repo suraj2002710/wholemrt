@@ -22,7 +22,7 @@ const topCarouselItems: TopCarouselItem[] = [
     id: 1,
     title: 'Mega Sale',
     subtitle: 'Up to 70% OFF',
-    image: 'https://placehold.co/1200x400/1C75BC/white?text=MEGA+SALE&fontsize=48',
+    image: 'https://res.cloudinary.com/dbn4tipjh/image/upload/v1763384792/WhatsApp_Image_2025-11-17_at_4.34.29_PM_yohger.jpg',
     badge: '🔥 Limited Time',
     discount: '70%',
     ctaText: 'Shop Now',
@@ -33,7 +33,7 @@ const topCarouselItems: TopCarouselItem[] = [
     id: 2,
     title: 'New Arrivals',
     subtitle: 'Fresh Stock Daily',
-    image: 'https://placehold.co/1200x400/FF6B35/white?text=NEW+ARRIVALS&fontsize=48',
+    image: 'https://res.cloudinary.com/dbn4tipjh/image/upload/v1763384857/WhatsApp_Image_2025-11-17_at_4.34.30_PM_wijhx4.jpg',
     badge: '🆕 Just In',
     discount: '30%',
     ctaText: 'Explore',
@@ -44,23 +44,12 @@ const topCarouselItems: TopCarouselItem[] = [
     id: 3,
     title: 'Wholesale Deals',
     subtitle: 'Best Prices Guaranteed',
-    image: 'https://placehold.co/1200x400/059669/white?text=WHOLESALE+DEALS&fontsize=48',
+    image: 'https://res.cloudinary.com/dbn4tipjh/image/upload/v1763384865/WhatsApp_Image_2025-11-17_at_4.35.42_PM_gkvadm.jpg',
     badge: '💼 Exclusive',
     discount: '50%',
     ctaText: 'View Deals',
     ctaLink: '/category/deals',
     features: ['Volume Discounts', 'Priority Support', 'Fast Shipping']
-  },
-  {
-    id: 4,
-    title: 'Business Essentials',
-    subtitle: 'Everything You Need',
-    image: 'https://placehold.co/1200x400/8B5CF6/white?text=BUSINESS+ESSENTIALS&fontsize=48',
-    badge: '⭐ Popular',
-    discount: '40%',
-    ctaText: 'Browse',
-    ctaLink: '/products',
-    features: ['Bulk Orders', 'Custom Pricing', 'Dedicated Support']
   }
 ];
 
@@ -98,7 +87,7 @@ export default function TopCarousel(): React.JSX.Element {
                 <div key={item.id} className="w-full flex-shrink-0 relative">
                   <div 
                     className="w-full h-full bg-cover bg-center  relative"
-                    style={{ backgroundImage: `url(${item.image})` }}
+                    style={{ backgroundImage: `url(${item?.image})` }}
                   >
                     {/* Overlay */}
                     <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-transparent" />

@@ -33,7 +33,12 @@ export default function ProductGrid({ products, columns = 6 }: ProductGridProps)
   const gridClass: string = gridCols[columns] || 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6';
 
   return (
-    <div className={`grid ${gridClass} gap-4`}>
+   <div
+  className={`grid ${gridClass} gap-6`}
+  style={{
+    gridTemplateColumns: "repeat(3, minmax(0, 1fr))"
+  }}
+>
       {products.map((product: Product) => (
         <Suspense key={product._id} fallback={<ProductCardSkeleton />}>
           <ProductCard product={product} />

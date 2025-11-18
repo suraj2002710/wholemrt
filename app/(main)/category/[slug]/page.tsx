@@ -422,4 +422,3 @@ export default function CategoryPage(): React.JSX.Element {
     </>
   );
 }
-
