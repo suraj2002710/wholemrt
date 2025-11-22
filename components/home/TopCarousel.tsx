@@ -33,7 +33,8 @@ export default function TopCarousel(): React.JSX.Element {
       try {
         console.log("Api",process.env.NEXT_PUBLIC_API_URL);
         
-        const API = `${process.env.NEXT_PUBLIC_API_URL}/api/banners/public`; 
+        //const API = `${process.env.NEXT_PUBLIC_API_URL}/api/banners/public`; 
+        const API = `https://wholemrtbackend.onrender.com/api/banners/public`; 
         const res = await axios.get(API);
 
 
