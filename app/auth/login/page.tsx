@@ -26,7 +26,11 @@ export default function LoginPage(): React.JSX.Element {
       // Use real API call
       await dispatch(loginAsync({ email, password })).unwrap();
       toast.success('Login successful!');
-      router.push('/');
+      if (user?.isAdmin && user?.role === 'admin') {
+        router.push('/admin');
+      } else {
+        router.push('/');
+      }
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Login failed';
       toast.error(errorMessage);
