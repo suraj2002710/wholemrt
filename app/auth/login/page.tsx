@@ -10,6 +10,10 @@ import { useAppDispatch } from '@/lib/store/hooks';
 import { loginAsync } from '@/lib/store/slices/authSlice';
 import { toast } from 'sonner';
 import { Mail } from 'lucide-react'
+interface User {
+  role: string;
+  isAdmin: string;
+}
 
 export default function LoginPage(): React.JSX.Element {
   const router = useRouter();
@@ -23,14 +27,14 @@ export default function LoginPage(): React.JSX.Element {
     setIsLoading(true);
 
     try {
-      // Use real API call
-      await dispatch(loginAsync({ email, password })).unwrap();
-      toast.success('Login successful!');
+      const user:any = await dispatch(loginAsync({ email, password })).unwrap();
+
       if (user?.isAdmin && user?.role === 'admin') {
         router.push('/admin');
       } else {
         router.push('/');
       }
+
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Login failed';
       toast.error(errorMessage);
@@ -69,18 +73,18 @@ export default function LoginPage(): React.JSX.Element {
               </label>
               <div className='relative'>
                 <Mail className='absolute left-3 top-3 h-4 w-4 text-gray-400' />
-              <Input
-                id="email"
-                type="email"
-                placeholder="you@business.com"
-                value={email}
-                onChange={handleEmailChange}
-                required
-                className='pl-9 focus:ring-2 focus:ring-primary/50 transition-all'
-              />
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="you@business.com"
+                  value={email}
+                  onChange={handleEmailChange}
+                  required
+                  className='pl-9 focus:ring-2 focus:ring-primary/50 transition-all'
+                />
               </div>
             </div>
-            
+
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <label htmlFor="password" className="text-sm font-medium">
