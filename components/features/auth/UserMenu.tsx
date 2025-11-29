@@ -13,13 +13,16 @@ import { User, LogOut, ShoppingBag, Settings, FileText } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '@/lib/store/hooks';
 import { logout } from '@/lib/store/slices/authSlice';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 export default function UserMenu(): React.JSX.Element {
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.auth.user);
+  const router = useRouter();
 
   const handleLogout = (): void => {
     dispatch(logout());
+      router.push('/auth/login');
   };
 
   return (
