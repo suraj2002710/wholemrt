@@ -23,7 +23,6 @@ export default function UserMenu(): React.JSX.Element {
   const handleLogout = (): void => {
     dispatch(logout());
       router.push('/auth/login');
-    
   };
 
   return (
