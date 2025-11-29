@@ -5,17 +5,20 @@ import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ArrowLeft, Save, X, Upload } from 'lucide-react';
+import { ArrowLeft, Save, X } from 'lucide-react';
 import Link from 'next/link';
 import { createBanner } from '@/lib/api/services/bannerService';
 
 export default function NewBannerPage() {
   const router = useRouter();
+
+  const [preview, setPreview] = useState<string | null>(null);
+
   const [formData, setFormData] = useState({
     title: '',
     subtitle: '',
     description: '',
-    image: '',
+    imageFile: null as File | null,
     badge: '',
     link: '',
     buttonText: '',
@@ -28,10 +31,15 @@ export default function NewBannerPage() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+  ) => {
     const { name, value, type } = e.target;
+
     const val = type === 'checkbox' ? (e.target as HTMLInputElement).checked : value;
+
     setFormData((prev) => ({ ...prev, [name]: val }));
+
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: '' }));
     }
@@ -41,9 +49,13 @@ export default function NewBannerPage() {
     const newErrors: Record<string, string> = {};
 
     if (!formData.title.trim()) newErrors.title = 'Title is required';
-    if (!formData.image.trim()) newErrors.image = 'Image URL is required';
+    if (!formData.imageFile) newErrors.image = 'Image file is required';
 
-    if (formData.startDate && formData.endDate && new Date(formData.startDate) >= new Date(formData.endDate)) {
+    if (
+      formData.startDate &&
+      formData.endDate &&
+      new Date(formData.startDate) >= new Date(formData.endDate)
+    ) {
       newErrors.endDate = 'End date must be after start date';
     }
 
@@ -54,37 +66,44 @@ export default function NewBannerPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!validate()) {
-      return;
-    }
+    if (!validate()) return;
 
     try {
       setLoading(true);
-      await createBanner({
-        title: formData.title,
-        subtitle: formData.subtitle || undefined,
-        description: formData.description || undefined,
-        image: formData.image,
-        badge: formData.badge || undefined,
-        link: formData.link || undefined,
-        buttonText: formData.buttonText || undefined,
-        order: parseInt(formData.order) || 0,
-        isActive: formData.isActive,
-        startDate: formData.startDate || undefined,
-        endDate: formData.endDate || undefined,
-      });
+
+      const fd = new FormData();
+      fd.append('title', formData?.title);
+      fd.append('subtitle', formData?.subtitle);
+      fd.append('description', formData?.description);
+      fd.append('badge', formData?.badge);
+      fd.append('link', formData?.link);
+      fd.append('buttonText', formData?.buttonText);
+      fd.append('order', formData?.order);
+      fd.append('isActive', formData?.isActive ? 'true' : 'false');
+      if (formData?.startDate) fd.append('startDate', formData?.startDate);
+      if (formData?.endDate) fd.append('endDate', formData?.endDate);
+      
+
+      
+      if (formData?.imageFile) {
+        fd.append('image', formData?.imageFile);
+      }
+
+      console.log('fd',fd)
+      await createBanner(fd); 
+
       alert('Banner created successfully!');
       router.push('/admin/banners');
     } catch (error) {
       console.error('Error creating banner:', error);
-      alert('Error creating banner. Please try again.');
+      alert('Error creating banner.');
     } finally {
       setLoading(false);
     }
   };
 
   const handleCancel = () => {
-    if (confirm('Are you sure you want to cancel? All changes will be lost.')) {
+    if (confirm('Cancel changes?')) {
       router.push('/admin/banners');
     }
   };
@@ -99,8 +118,9 @@ export default function NewBannerPage() {
               <ArrowLeft className="h-4 w-4" />
             </Button>
           </Link>
+
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Create New Banner</h1>
+            <h1 className="text-3xl font-bold">Create New Banner</h1>
             <p className="text-muted-foreground mt-1">
               Add a new banner to the homepage carousel
             </p>
@@ -127,169 +147,125 @@ export default function NewBannerPage() {
                   placeholder="e.g., Coca Cola Deal"
                   className={errors.title ? 'border-red-500' : ''}
                 />
-                {errors.title && (
-                  <p className="text-red-500 text-sm mt-1">{errors.title}</p>
-                )}
+                {errors.title && <p className="text-red-500 text-sm">{errors?.title}</p>}
               </div>
 
               <div>
-                <label className="text-sm font-medium mb-2 block">
-                  Subtitle
-                </label>
-                <Input
-                  name="subtitle"
-                  value={formData.subtitle}
-                  onChange={handleChange}
-                  placeholder="e.g., Special Offer"
-                />
+                <label className="text-sm font-medium mb-2 block">Subtitle</label>
+                <Input name="subtitle" value={formData.subtitle} onChange={handleChange} />
               </div>
 
               <div>
-                <label className="text-sm font-medium mb-2 block">
-                  Description
-                </label>
+                <label className="text-sm font-medium mb-2 block">Description</label>
                 <textarea
                   name="description"
                   value={formData.description}
                   onChange={handleChange}
-                  placeholder="Brief description of the banner..."
                   rows={3}
-                  className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  className="flex min-h-[80px] w-full rounded-md border p-2 text-sm"
                 />
               </div>
 
               <div>
-                <label className="text-sm font-medium mb-2 block">
-                  Badge Text
-                </label>
-                <Input
-                  name="badge"
-                  value={formData.badge}
-                  onChange={handleChange}
-                  placeholder="e.g., Best Seller, New Deal, Popular"
-                />
-                <p className="text-sm text-muted-foreground mt-1">
-                  Optional badge to display on the banner
-                </p>
+                <label className="text-sm font-medium mb-2 block">Badge</label>
+                <Input name="badge" value={formData.badge} onChange={handleChange} />
               </div>
             </CardContent>
           </Card>
 
-          {/* Image & Link */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Image & Link</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <label className="text-sm font-medium mb-2 block">
-                  Image URL <span className="text-red-500">*</span>
-                </label>
-                <Input
-                  name="image"
-                  value={formData.image}
-                  onChange={handleChange}
-                  placeholder="https://example.com/image.jpg or /images/banner.jpg"
-                  className={errors.image ? 'border-red-500' : ''}
-                />
-                {errors.image && (
-                  <p className="text-red-500 text-sm mt-1">{errors.image}</p>
-                )}
-                <p className="text-sm text-muted-foreground mt-1">
-                  Enter the full URL or relative path to the banner image
-                </p>
-              </div>
+          {/* Image Upload ONLY */}
+<Card>
+  <CardHeader>
+    <CardTitle>Upload Image</CardTitle>
+  </CardHeader>
 
-              <div>
-                <label className="text-sm font-medium mb-2 block">
-                  Link URL
-                </label>
-                <Input
-                  name="link"
-                  value={formData.link}
-                  onChange={handleChange}
-                  placeholder="e.g., /products/coca-cola"
-                />
-                <p className="text-sm text-muted-foreground mt-1">
-                  Where users will be redirected when clicking the banner
-                </p>
-              </div>
+  <CardContent className="space-y-4">
+    <div>
+      <label className="text-sm font-medium mb-2 block">
+        Select Image <span className="text-red-500">*</span>
+      </label>
 
-              <div>
-                <label className="text-sm font-medium mb-2 block">
-                  Button Text
-                </label>
-                <Input
-                  name="buttonText"
-                  value={formData.buttonText}
-                  onChange={handleChange}
-                  placeholder="e.g., Shop Now, View Details"
-                />
-                <p className="text-sm text-muted-foreground mt-1">
-                  Text to display on the call-to-action button
-                </p>
-              </div>
-            </CardContent>
-          </Card>
+      <Input
+        type="file"
+        accept="image/*"
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          if (!file) return;
+
+          const img = new Image();
+          img.src = URL.createObjectURL(file);
+
+          img.onload = () => {
+            // Always allow image (NO ERROR)
+            setFormData((prev) => ({
+              ...prev,
+              imageFile: file,
+            }));
+            setPreview(URL.createObjectURL(file));
+          };
+        }}
+      />
+
+      {/* BASE SIZE TEXT (NO ERROR) */}
+      <p className="text-gray-500 text-sm mt-1">
+        Required Size: <span className="font-semibold">1200 × 400 px</span>
+      </p>
+
+      {/* IMAGE PREVIEW */}
+      {preview && (
+        <img
+          src={preview}
+          className="mt-3 w-full h-40 object-cover rounded-md border"
+        />
+      )}
+    </div>
+
+    <div>
+      <label className="text-sm font-medium mb-2 block">Link URL</label>
+      <Input name="link" value={formData.link} onChange={handleChange} />
+    </div>
+
+    <div>
+      <label className="text-sm font-medium mb-2 block">Button Text</label>
+      <Input name="buttonText" value={formData.buttonText} onChange={handleChange} />
+    </div>
+  </CardContent>
+</Card>
+
+
 
           {/* Display Settings */}
           <Card>
             <CardHeader>
               <CardTitle>Display Settings</CardTitle>
             </CardHeader>
+
             <CardContent className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2">
                 <div>
-                  <label className="text-sm font-medium mb-2 block">
-                    Display Order
-                  </label>
-                  <Input
-                    name="order"
-                    type="number"
-                    value={formData.order}
-                    onChange={handleChange}
-                    placeholder="0"
-                  />
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Lower numbers appear first in the carousel
-                  </p>
+                  <label className="text-sm font-medium mb-2 block">Order</label>
+                  <Input name="order" type="number" value={formData.order} onChange={handleChange} />
                 </div>
 
                 <div className="flex items-center gap-2 pt-7">
                   <input
                     type="checkbox"
                     name="isActive"
-                    id="isActive"
                     checked={formData.isActive}
                     onChange={handleChange}
-                    className="h-4 w-4 rounded border-gray-300"
                   />
-                  <label htmlFor="isActive" className="text-sm font-medium">
-                    Active (visible on homepage)
-                  </label>
+                  <label>Active</label>
                 </div>
               </div>
 
               <div className="grid gap-4 md:grid-cols-2">
                 <div>
-                  <label className="text-sm font-medium mb-2 block">
-                    Start Date
-                  </label>
-                  <Input
-                    name="startDate"
-                    type="date"
-                    value={formData.startDate}
-                    onChange={handleChange}
-                  />
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Optional: Banner will only show after this date
-                  </p>
+                  <label className="text-sm font-medium mb-2 block">Start Date</label>
+                  <Input name="startDate" type="date" value={formData.startDate} onChange={handleChange} />
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium mb-2 block">
-                    End Date
-                  </label>
+                  <label className="text-sm font-medium mb-2 block">End Date</label>
                   <Input
                     name="endDate"
                     type="date"
@@ -300,9 +276,6 @@ export default function NewBannerPage() {
                   {errors.endDate && (
                     <p className="text-red-500 text-sm mt-1">{errors.endDate}</p>
                   )}
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Optional: Banner will hide after this date
-                  </p>
                 </div>
               </div>
             </CardContent>
@@ -311,22 +284,13 @@ export default function NewBannerPage() {
           {/* Actions */}
           <Card>
             <CardContent className="pt-6">
-              <div className="flex items-center justify-end gap-3">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={handleCancel}
-                  className="gap-2"
-                  disabled={loading}
-                >
+              <div className="flex justify-end gap-3">
+                <Button type="button" variant="outline" onClick={handleCancel} disabled={loading}>
                   <X className="h-4 w-4" />
                   Cancel
                 </Button>
-                <Button 
-                  type="submit" 
-                  className="gap-2 bg-[#006e9d] hover:bg-[#005580] text-white shadow-md"
-                  disabled={loading}
-                >
+
+                <Button type="submit" className="bg-[#006e9d] text-white" disabled={loading}>
                   <Save className="h-4 w-4" />
                   {loading ? 'Creating...' : 'Create Banner'}
                 </Button>
@@ -338,4 +302,3 @@ export default function NewBannerPage() {
     </div>
   );
 }
-
