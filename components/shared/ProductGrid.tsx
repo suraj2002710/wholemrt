@@ -21,7 +21,6 @@ function ProductCardSkeleton(): React.JSX.Element {
     </div>
   );
 }
-
 export default function ProductGrid({ products, columns = 6 }: ProductGridProps): React.JSX.Element {
   const gridCols: Record<number, string> = {
     2: 'grid-cols-2',
